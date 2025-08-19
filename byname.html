@@ -1,0 +1,207 @@
+Filter customers by name as you type
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RestorePro CRM - Customer Management</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f8f9fa;
+    color: #202124;
+  }
+  header {
+    background: #1a73e8;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+  }
+  main {
+    padding: 2rem;
+    max-width: 900px;
+    margin: auto;
+  }
+  h1, h2 {
+    margin-bottom: 1rem;
+  }
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #1557b0;
+  }
+  #searchInput {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  th, td {
+    border: 1px solid #dadce0;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  @media (max-width: 600px) {
+    main {
+      padding: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>RestorePro CRM</h1>
+  <p>Water & Fire Restoration Management</p>
+</header>
+<main>
+  <h2>Add New Customer</h2>
+  <form id="customerForm">
+    <div class="form-group">
+      <label for="customerName">Customer Name *</label>
+      <input type="text" id="customerName" name="customerName" required />
+    </div>
+    <div class="form-group">
+      <label for="company">Company</label>
+      <input type="text" id="company" name="company" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone *</label>
+      <input type="tel" id="phone" name="phone" required />
+    </div>
+    <div class="form-group">
+      <label for="address">Address</label>
+      <textarea id="address" name="address" placeholder="Full address..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="customerType">Customer Type *</label>
+      <select id="customerType" name="customerType" required>
+        <option value="">Select Type</option>
+        <option value="residential">Residential</option>
+        <option value="commercial">Commercial</option>
+        <option value="insurance">Insurance Company</option>
+        <option value="property">Property Management</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" placeholder="Additional information..."></textarea>
+    </div>
+    <button type="submit">Add Customer</button>
+  </form>
+
+  <h2>Customer List</h2>
+  <input type="text" id="searchInput" placeholder="Search customers by name..." />
+
+  <table id="customerTable" aria-label="Customer List">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Company</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</main>
+
+<script>
+  const form = document.getElementById('customerForm');
+  const tableBody = document.querySelector('#customerTable tbody');
+  const searchInput = document.getElementById('searchInput');
+
+  // Load customers from LocalStorage or empty array
+  function loadCustomers() {
+    return JSON.parse(localStorage.getItem('customers') || '[]');
+  }
+
+  // Save customers array to LocalStorage
+  function saveCustomers(customers) {
+    localStorage.setItem('customers', JSON.stringify(customers));
+  }
+
+  // Render customers in the table, filtered by search term
+  function renderCustomers(filter = '') {
+    const customers = loadCustomers();
+    tableBody.innerHTML = '';
+    customers
+      .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(c => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${c.name}</td>
+          <td>${c.company || '-'}</td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td>${c.type}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+  }
+
+  // Handle form submission
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const newCustomer = {
+      name: formData.get('customerName'),
+      company: formData.get('company'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      address: formData.get('address'),
+      type: formData.get('customerType'),
+      notes: formData.get('notes')
+    };
+    const customers = loadCustomers();
+    customers.push(newCustomer);
+    saveCustomers(customers);
+    renderCustomers();
+    alert(`Customer "${newCustomer.name}" added!`);
+    form.reset();
+  });
+
+  // Filter customers as user types
+  searchInput.addEventListener('input', () => {
+    renderCustomers(searchInput.value);
+  });
+
+  // Initial render
+  renderCustomers();
+</script>
+</body>
+</html>

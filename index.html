@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RestorePro CRM - Water & Fire Restoration Management</title>
+    <style>
+        /* Basic reset and styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #202124;
+        }
+        header {
+            background: #1a73e8;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+        main {
+            padding: 2rem;
+            max-width: 900px;
+            margin: auto;
+        }
+        h1 {
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1557b0;
+        }
+        @media (max-width: 600px) {
+            main {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>RestorePro CRM</h1>
+        <p>Water & Fire Restoration Management</p>
+    </header>
+    <main>
+        <h2>Add New Customer</h2>
+        <form id="customerForm">
+            <div class="form-group">
+                <label for="customerName">Customer Name *</label>
+                <input type="text" id="customerName" name="customerName" required />
+            </div>
+            <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" name="company" />
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone *</label>
+                <input type="tel" id="phone" name="phone" required />
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" placeholder="Full address..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="customerType">Customer Type *</label>
+                <select id="customerType" name="customerType" required>
+                    <option value="">Select Type</option>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="insurance">Insurance Company</option>
+                    <option value="property">Property Management</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" placeholder="Additional information..."></textarea>
+            </div>
+            <button type="submit">Add Customer</button>
+        </form>
+    </main>
+
+    <script>
+        // Simple form submission handler
+        document.getElementById('customerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const customer = {
+                name: formData.get('customerName'),
+                company: formData.get('company'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                type: formData.get('customerType'),
+                notes: formData.get('notes')
+            };
+            console.log('New customer added:', customer);
+            alert('Customer "' + customer.name + '" added successfully!');
+            event.target.reset();
+        });
+    </script>
+</body>
+</html>

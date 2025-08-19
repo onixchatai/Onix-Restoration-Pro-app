@@ -1,0 +1,72 @@
+Heres a quick snippet to get you started with storing and displaying customers locally:
+<input type="text" id="searchInput" placeholder="Search customers..." />
+<table id="customerTable" border="1" style="width:100%; margin-top:10px;">
+  <thead>
+    <tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Type</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  const form = document.getElementById('customerForm');
+  const tableBody = document.querySelector('#customerTable tbody');
+  const searchInput = document.getElementById('searchInput');
+
+  function loadCustomers() {
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    return customers;
+  }
+
+  function saveCustomers(customers) {
+    localStorage.setItem('customers', JSON.stringify(customers));
+  }
+
+  function loadCustomers() {
+    const stored = localStorage.getItem('customers');
+    return stored ? JSON.parse(stored) : [];
+  }
+  function renderCustomers(filter = '') {
+    const customers = loadCustomers();
+    tableBody.innerHTML = '';
+    customers
+      .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(c => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${c.name}</td>
+          <td>${c.company || '-'}</td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td>${c.type}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const newCustomer = {
+      name: formData.get('customerName'),
+      company: formData.get('company'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      address: formData.get('address'),
+      type: formData.get('customerType'),
+      notes: formData.get('notes')
+    };
+    const customers = loadCustomers();
+    customers.push(newCustomer);
+    saveCustomers(customers);
+    renderCustomers();
+    alert(`Customer "${newCustomer.name}" added!`);
+    form.reset();
+  });
+
+  searchInput.addEventListener('input', () => {
+    renderCustomers(searchInput.value);
+  });
+
+  // Initial render
+  renderCustomers();
+</script>
